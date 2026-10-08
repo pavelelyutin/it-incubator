@@ -1,5 +1,5 @@
 export function PageTitle() {
   return (
-    <h1>Musicfun player</h1>
+    <h1>Trelly</h1>
   )
 }

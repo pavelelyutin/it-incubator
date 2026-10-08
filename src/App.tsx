@@ -1,95 +1,96 @@
+import './App.css'
 import {useState, useEffect} from "react";
 
-
 export function App() {
-  const [selectedTrackId, setSelectedTrackId] = useState(null)
-  const [selectedTrack, setSelectedTrack] = useState(null)
-  const [tracks, setTracks] = useState(null)
-
-  const [text, setText] = useState('')
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null)
+  const [tasks, setTasks] = useState(null);
+  const [boardId, setBoardId] = useState(null);
 
   useEffect(() => {
-    fetch("https://musicfun.it-incubator.app/api/1.0/playlists/tracks", {
+    fetch("https://trelly.it-incubator.app/api/1.0/boards/tasks", {
       headers: {
         "api-key": "c251ca4c-bece-44f5-adb8-762906fb5aa8",
-      },
+      }
     })
-      .then((res) => res.json())
-      .then((json) => {
-        setTracks(json.data)
-      })
+      .then((response) => response.json())
+      .then((json) => setTasks(json.data))
   }, [])
 
   useEffect(() => {
-    if (!selectedTrackId) {
+    if (!selectedTaskId) {
       return;
     }
 
-    fetch(`https://musicfun.it-incubator.app/api/1.0/playlists/tracks/${selectedTrackId}`, {
+    fetch(`https://trelly.it-incubator.app/api/1.0/boards/${boardId}/tasks/${selectedTaskId}`, {
       headers: {
-        "api-key": 'c251ca4c-bece-44f5-adb8-762906fb5aa8'
+        'api-key': "c251ca4c-bece-44f5-adb8-762906fb5aa8",
       }
     })
-      .then((res) => res.json())
-      .then((json) => setSelectedTrack(json.data))
-  }, [selectedTrackId])
+      .then((response) => response.json())
+      .then((json) => {setSelectedTask(json.data)})
+  }, [selectedTaskId])
 
-  if (tracks === null) {
+  if (tasks === null) {
     return (
-      <div>
-        <h1>Musicfun player</h1>
-        <span>Loading...</span>
-      </div>
+      <>
+        <h1>Список задач</h1>
+        <p>Загрузка...</p>
+      </>
     )
   }
 
-  if (tracks.length === 0) {
+  if (tasks.length === 0) {
     return (
-      <div>
-        <h1>Musicfun player</h1>
-        <span>No tracks</span>
-      </div>
+      <>
+        <h1>Список задач</h1>
+        <p>Задачи отсутствуют</p>
+      </>
     )
   }
 
   return (
     <>
-      <h1>Musicfun player</h1>
+      <h1>Список задач</h1>
 
       <button onClick={() => {
-        setSelectedTrackId(null)
-        setSelectedTrack(null)
-      }}>reset selection
+        setSelectedTaskId(null)
+        setSelectedTask(null)
+      }}>reset border
       </button>
 
-      <div style={{display: "flex", gap: "30px"}}>
-        <ul>
-          {tracks.map((track) => (
-            <li
-              key={track.id}
-              style={{border: track.id === selectedTrackId ? "1px solid orange" : "none"}}
-            >
-              <div onClick={() => {
-                setSelectedTrackId(track.id)
-              }}>
-                {track.attributes.title}
-              </div>
-              <audio controls src={track.attributes.attachments[0].url}></audio>
-            </li>
-          ))}
+      <div className="tasks">
+        <ul className="tasks__list">
+          {tasks.map((task) => {
+            return (
+              <li onClick={() => {
+                setSelectedTaskId(task.id)
+                setBoardId(task.attributes.boardId)
+              }} className="tasks__item" key={task.id}
+                  style={{
+                    backgroundColor: task.attributes.priority === 1 ? '#ffd7b5' : task.attributes.priority === 2 ? '#ffb38a' : task.attributes.priority === 3 ? '#ff9248' : task.attributes.priority === 4 ? '#ff6700' : '#fff',
+                    borderColor: task.id === selectedTaskId ? 'blue' : '#ddd'
+                  }}>
+                <p><b>Заголовок: </b><span style={{textDecoration: task.attributes.status === 2 ? "line-through" : ""}}>{task.attributes.title}</span></p>
+                <p><b>Статус: </b><input type="checkbox" checked={task.attributes.status}/></p>
+                <p><b>Дата создания задачи: </b><span>{new Date(task.attributes.addedAt).toLocaleDateString()}</span></p>
+              </li>
+            )
+          })}
         </ul>
 
-        <div>
-          <h3>Details</h3>
-          {!selectedTrack && !selectedTrackId && "Track is not selected"}
-          {!selectedTrack && selectedTrackId && "Loading..."}
-          {selectedTrack && selectedTrackId && selectedTrackId !== selectedTrack.id && "Loading..."}
-          {selectedTrack && (
-            <div>
-              <h3>{selectedTrack.attributes.title}</h3>
-              <h4>Lyrics</h4>
-              <p>{selectedTrack.attributes.lyrics ?? "no lyrics"}</p>
-            </div>
+        <div className="tasks__detail">
+          <h2>Task Detail</h2>
+
+          {!selectedTaskId && !selectedTask && "Task is not selected"}
+          {selectedTaskId && !selectedTask && "Loading..."}
+          {selectedTask && selectedTaskId && selectedTaskId !== selectedTask.id && "Loading..."}
+          {selectedTask  && (
+            <ul>
+              <li><b>Title: </b>{selectedTask.attributes.title}</li>
+              <li><b>Board Title: </b>{selectedTask.attributes.boardTitle}</li>
+              <li><b>Description: </b>{selectedTask.attributes.description || "no description"}</li>
+            </ul>
           )}
         </div>
       </div>
