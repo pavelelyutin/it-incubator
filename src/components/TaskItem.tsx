@@ -1,21 +1,24 @@
 type GlobalTaskListItemDto = {
-    id: string
-    boardId: string
-    priority: number
-    status: number
-    title: string
+  id: string
+  boardId: string
+  priority: number
+  status: number
+  title: string
+  addedAt: string
 }
 
 export type GlobalTaskListItemJsonApiData = {
-    id: string
-    attributes: GlobalTaskListItemDto
+  id: string
+  attributes: GlobalTaskListItemDto
 }
 
 type Props = {
-    task
+  task: GlobalTaskListItemJsonApiData
+  isSelected: boolean
+  onSelectTask: (taskId: string, boardId: string) => void
 }
 
-export function TaskItem({ task, isSelected, onSelectTask}) {
+export function TaskItem({task, isSelected, onSelectTask}: Props) {
   const handleClick = () => onSelectTask?.(task.id, task.attributes.boardId)
 
   return (
@@ -27,7 +30,7 @@ export function TaskItem({ task, isSelected, onSelectTask}) {
       <p><b>Заголовок: </b><span
         style={{textDecoration: task.attributes.status === 2 ? "line-through" : ""}}>{task.attributes.title}</span>
       </p>
-      <p><b>Статус: </b><input type="checkbox" checked={task.attributes.status}/></p>
+      <p><b>Статус: </b><input type="checkbox" checked={!!task.attributes.status}/></p>
       <p><b>Дата создания задачи: </b><span>{new Date(task.attributes.addedAt).toLocaleDateString()}</span></p>
     </li>
   )
