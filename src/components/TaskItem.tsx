@@ -1,3 +1,20 @@
+type GlobalTaskListItemDto = {
+    id: string
+    boardId: string
+    priority: number
+    status: number
+    title: string
+}
+
+export type GlobalTaskListItemJsonApiData = {
+    id: string
+    attributes: GlobalTaskListItemDto
+}
+
+type Props = {
+    task
+}
+
 export function TaskItem({ task, isSelected, onSelectTask}) {
   const handleClick = () => onSelectTask?.(task.id, task.attributes.boardId)
 
