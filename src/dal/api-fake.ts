@@ -1,6 +1,20 @@
+type TaskDetailsDto = {
+  title: string
+  boardTitle: string
+  description: string
+}
+
+export type TaskDetailData = {
+  id: string
+  attributes: TaskDetailsDto
+}
+
+export type GetTaskOutput = {
+  data: TaskDetailData
+}
 
 export const getTask = () => {
-  const promise = Promise.resolve(
+  const promise: Promise<GetTaskOutput> = Promise.resolve(
     {
       "data": {
         "id": "80cea228-e6dd-4fdc-bb7e-ea7a34eb21e5",
@@ -26,6 +40,23 @@ export const getTask = () => {
   return promise
 }
 
+type GlobalTaskListItemDto = {
+  id: string
+  boardId: string
+  priority: number
+  status: number
+  title: string
+  addedAt: string
+}
+
+export type GlobalTaskListItemJsonApiData = {
+  id: string
+  attributes: GlobalTaskListItemDto
+}
+
+export type GlobalTaskListResponse = {
+  data: Array<GlobalTaskListItemJsonApiData>
+}
 
 export const getTasks = () => {
   const promise = Promise.resolve({
