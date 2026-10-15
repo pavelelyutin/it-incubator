@@ -1,34 +1,23 @@
-import {useEffect, useState} from "react";
-import { getTrack, type GetTrackDetailsOutputData} from "../dal/api.ts";
+import {useTrackDetail} from "../bll/UseTrackDetail.tsx";
 
 type Props = {
   trackId: string | null
 }
 
-export function TrackDetail({ trackId }: Props) {
-  const [selectedTrack, setSelectedTrack] = useState<GetTrackDetailsOutputData | null>(null)
-
-  useEffect(() => {
-    if (!trackId) {
-      setSelectedTrack(null)
-      return;
-    }
-
-    getTrack(trackId)
-      .then((json) => setSelectedTrack(json.data))
-  }, [trackId])
+export function TrackDetail({ trackId }:Props) {
+  const { trackDetails } = useTrackDetail(trackId)
 
   return (
     <div>
       <h3>Details</h3>
-      {!selectedTrack && !trackId && "Track is not selected"}
-      {!selectedTrack && trackId && "Loading..."}
-      {selectedTrack && trackId && trackId !== selectedTrack.id && "Loading..."}
-      {selectedTrack && (
+      {!trackDetails && !trackId && "Track is not selected"}
+      {!trackDetails && trackId && "Loading..."}
+      {trackDetails && trackId && trackId !== trackDetails.id && "Loading..."}
+      {trackDetails && (
         <div>
-          <h3>{selectedTrack.attributes.title}</h3>
+          <h3>{trackDetails.attributes.title}</h3>
           <h4>Lyrics</h4>
-          <p>{selectedTrack.attributes.lyrics ?? "no lyrics"}</p>
+          <p>{trackDetails.attributes.lyrics ?? "no lyrics"}</p>
         </div>
       )}
     </div>
