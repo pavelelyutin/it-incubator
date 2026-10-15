@@ -1,6 +1,5 @@
-import {useEffect, useState} from "react";
 import {TaskItem} from "./TaskItem.tsx";
-import {getTasks, type GlobalTaskListItemJsonApiData} from "../dal/api.ts";
+import {useTasks} from "../bll/useTasks.tsx";
 
 type Props = {
   selectedTaskId: string | null
@@ -8,12 +7,7 @@ type Props = {
 }
 
 export function TaskList({selectedTaskId, onTaskSelect}: Props) {
-  const [tasks, setTasks] = useState<Array<GlobalTaskListItemJsonApiData> | null>(null);
-
-  useEffect(() => {
-    getTasks()
-      .then((json) => setTasks(json.data))
-  }, [])
+  const {tasks} = useTasks();
 
   const handleResetClick = () => {
     onTaskSelect?.(null, null)

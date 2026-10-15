@@ -1,5 +1,4 @@
-import {useEffect, useState} from "react";
-import {getTask, type TaskDetailData} from "../dal/api.ts";
+import {useTaskDetails} from "../bll/useTaskDetails.tsx";
 
 type Props = {
   taskId: string | null
@@ -7,31 +6,20 @@ type Props = {
 }
 
 export function TaskDetail({ taskId, boardId }:Props) {
-  const [selectedTask, setSelectedTask] = useState<TaskDetailData | null>(null)
-
-  useEffect(() => {
-    if (!taskId) {
-      setSelectedTask(null)
-      return;
-    }
-
-    getTask(taskId, boardId)
-      .then((json) => {setSelectedTask(json.data)})
-  }, [taskId, boardId])
-
+  const { taskDetails } = useTaskDetails(taskId, boardId)
 
   return (
     <div className="tasks__detail">
       <h2>Task Detail</h2>
 
-      {!taskId && !selectedTask && "Task is not selected"}
-      {taskId && !selectedTask && "Loading..."}
-      {selectedTask && taskId && taskId !== selectedTask.id && "Loading..."}
-      {selectedTask  && (
+      {!taskId && !taskDetails && "Task is not selected"}
+      {taskId && !taskDetails && "Loading..."}
+      {taskDetails && taskId && taskId !== taskDetails.id && "Loading..."}
+      {taskDetails  && (
         <ul>
-          <li><b>Title: </b>{selectedTask.attributes.title}</li>
-          <li><b>Board Title: </b>{selectedTask.attributes.boardTitle}</li>
-          <li><b>Description: </b>{selectedTask.attributes.description || "no description"}</li>
+          <li><b>Title: </b>{taskDetails.attributes.title}</li>
+          <li><b>Board Title: </b>{taskDetails.attributes.boardTitle}</li>
+          <li><b>Description: </b>{taskDetails.attributes.description || "no description"}</li>
         </ul>
       )}
     </div>
